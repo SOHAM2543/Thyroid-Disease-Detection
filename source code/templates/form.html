@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thyroid Disease Prediction</title>
+    <style>
+        /* CSS Styles */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 450px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .info-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .info-text {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            font-size: 0.9em;
+            color: #666;
+            z-index: 1;
+        }
+
+        .info-icon:hover + .info-text {
+            display: block;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #5cb85c;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thyroid Information Form</h1>
+        <form action="{{url_for('predict_datapoint')}}" method="post">
+            <label for="age">Person Age:
+                <span class="info-icon">i</span>
+                <div class="info-text">Enter the age of the individual (in years).</div>
+            </label>
+            <input type="number" id="age" name="age" placeholder="Enter age in years (Range: 1-100)" required>
+
+            <label for="on_thyroxine">On Thyroxine:
+                <span class="info-icon">i</span>
+                <div class="info-text">Indicate if the individual is currently taking thyroxine, a common hormone replacement therapy for hypothyroidism.</div>
+            </label>
+            <select id="on_thyroxine" name="on_thyroxine" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="t">True (Yes)</option>
+                <option value="f">False (No)</option>
+            </select>
+
+            <label for="goitre">Goitre:
+                <span class="info-icon">i</span>
+                <div class="info-text">Indicate if the individual has a goitre, which is an abnormal enlargement of the thyroid gland.</div>
+            </label>
+            <select id="goitre" name="goitre" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="t">True (Yes)</option>
+                <option value="f">False (No)</option>
+            </select>
+
+            <label for="TSH">TSH Level:
+                <span class="info-icon">i</span>
+                <div class="info-text">Enter the Thyroid Stimulating Hormone (TSH) level. TSH is a critical hormone in regulating thyroid function.</div>
+            </label>
+            <input type="number" id="TSH" name="TSH" placeholder="Enter TSH level (Range: 0.4-4.0 mU/L)" step="0.01" required>
+
+            <label for="TSH_measured">TSH Measured:
+                <span class="info-icon">i</span>
+                <div class="info-text">Indicate whether the TSH level was measured for the individual.</div>
+            </label>
+            <select id="TSH_measured" name="TSH_measured" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="t">True (Yes)</option>
+                <option value="f">False (No)</option>
+            </select>
+
+            <label for="T3">T3 Level:
+                <span class="info-icon">i</span>
+                <div class="info-text">Enter the Triiodothyronine (T3) level, a hormone produced by the thyroid gland, critical for the body’s metabolism.</div>
+            </label>
+            <input type="number" id="T3" name="T3" placeholder="Enter T3 level (Range: 0.8-2.0 ng/mL)" step="0.01" required>
+
+            <label for="TT4_measured">TT4 Measured:
+                <span class="info-icon">i</span>
+                <div class="info-text">Indicate whether the Total Thyroxine (TT4) level was measured for the individual.</div>
+            </label>
+            <select id="TT4_measured" name="TT4_measured" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="t">True (Yes)</option>
+                <option value="f">False (No)</option>
+            </select>
+
+            <label for="TT4">TT4 Level:
+                <span class="info-icon">i</span>
+                <div class="info-text">Enter the Total Thyroxine (TT4) level. TT4 is a key hormone produced by the thyroid gland and is essential in regulating metabolism.</div>
+            </label>
+            <input type="number" id="TT4" name="TT4" placeholder="Enter TT4 level (Range: 4.5-11.2 µg/dL)" step="0.1" required>
+
+            <label for="FTI">FTI (Free Thyroxine Index):
+                <span class="info-icon">i</span>
+                <div class="info-text">Enter the Free Thyroxine Index (FTI), which is an estimate of the amount of free thyroxine in the blood, important for assessing thyroid function.</div>
+            </label>
+            <input type="number" id="FTI" name="FTI" placeholder="Enter FTI (Range: 1-4)" step="0.1" required>
+
+            <label for="referral_source">Referral Source:
+                <span class="info-icon">i</span>
+                <div class="info-text">Select the referral source, indicating where the individual was referred from, which can provide context to their medical history.</div>
+            </label>
+            <select id="referral_source" name="referral_source" required>
+                <option value="" disabled selected>Select an option</option>
+                <option value="SVHC">SVHC (Specialist Health Care)</option>
+                <option value="other">Other</option>
+                <option value="SVI">SVI (Self-referred)</option>
+                <option value="STMW">STMW (Specialist Thyroid Management Wing)</option>
+                <option value="SVHD">SVHD (Specialist Health Department)</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+        <div><h1>{{final_result}}</h1></div>
+    </div>
+</body>
+</html>
